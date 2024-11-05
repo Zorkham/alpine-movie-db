@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en" x-data="navigation">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="An Alpine.js Project Planner application">
+
+  <title>Alpine.js · Project Planner</title>
+
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="stylesheet" href="src/styles/main.css" />
+
+  <script defer type="module" src="src/main.ts"></script>
+</head>
+
+<body x-data="planner" class="antialiased" :class="isDragging ? 'cursor-grab' : 'cursor-auto'">
+  <header class="border-b">
+    <div class="container mx-auto py-4 px-6 flex justify-between items-center space-x-12">
+      <h1 @click="changeTab('board')" class="text-2xl font-bold text-gray-900 cursor-pointer">Project Planner
+      </h1>
+      <nav class="flex space-x-6">
+        <button data-cy="button-tab-board" @click="changeTab('board')"
+          :class="currentTab === 'board' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'"
+          class="flex items-center py-2"><i class="ph ph-kanban pr-2"></i> Board</button>
+        <button data-cy="button-tab-list" @click="changeTab('list')"
+          :class="currentTab === 'list' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'"
+          class="flex items-center py-2"><i class="ph ph-list-bullets pr-2"></i> List</button>
+      </nav>
+      <div class="flex space-x-3 items-center">
+        <button data-cy="button-new-task" @click="openTaskModal(0)"
+          class="hidden md:flex items-center py-2 p-2 rounded-md text-gray-500 hover:text-gray-700">
+          <i class="ph ph-plus text-sm pr-2"></i> New Task
+        </button>
+        <div class="relative">
+          <input data-cy="input-search" type="text" placeholder="Search for tasks..." x-model="search" @input="search"
+            class="hidden lg:block p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 w-[250px]"
+            aria-describedby="search-help" />
+          <button x-cloak x-show="search" @click="clearSearch"
+            class="absolute inset-y-0 right-0 flex items-center pr-2">
+            <i class="ph ph-x text-gray-500 cursor-pointer hover:text-gray-700"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="p-6">
+    <div data-cy="board-page" x-cloak x-show="currentTab === 'board'"
+      class="flex flex-row gap-x-6 min-h-screen overflow-x-auto">
+      <template x-for="(column, columnIndex) in columns" :key="column.id">
+        <div data-cy="column-item" @drop.prevent="dropTask(columnIndex)" @dragover.prevent :class="column.bgClass"
+          class="w-1/4 min-w-[330px] rounded-lg p-2">
+          <header class="flex items-center justify-between mb-4">
+            <div class="flex items-center space-x-2">
+              <p :class="column.badgeClass"
+                class="flex items-center gap-x-1 px-2 py-1 rounded-md text-white text-sm uppercase">
+                <i :class="column.badgeIcon" class="ph text-sm"></i>
+                <span x-text="column.title"></span>
+              </p>
+              <span class="text-gray-500 text-sm font-semibold px-1"
+                x-text="filteredTasks(column.tasks)?.length"></span>
+            </div>
+            <div class="relative">
+              <button @click="openTaskModal(columnIndex)" class="text-gray-500 hover:text-gray-700">
+                <i class="ph ph-plus text-lg"></i>
+              </button>
+              <button data-cy="button-dropdown" @click="toggleDropdown(columnIndex)"
+                class="relative text-gray-500 hover:text-gray-700">
+                <i class="ph ph-dots-three text-lg"></i>
+              </button>
+              <div x-transition.opacity x-cloak x-show="activeDropdown === columnIndex"
+                @click.away="activeDropdown = null"
+                class="absolute top-8 right-0 bg-white border rounded-lg shadow-md text-sm w-48 z-10">
+                <button data-cy="button-column-remove-all" @click="clearTasks(columnIndex)"
+                  class="block w-full text-left px-4 py-2 hover:bg-gray-200 text-red-600">Clear
+                  All
+                  Tasks</button>
+                <button @click="sortTasks(columnIndex, 'alphaAsc')"
+                  class="block w-full text-left px-4 py-2 hover:bg-gray-200">Sort A - Z</button>
+                <button @click="sortTasks(columnIndex, 'alphaDesc')"
+                  class="block w-full text-left px-4 py-2 hover:bg-gray-200">Sort Z - A</button>
+                <button @click="sortTasks(columnIndex, 'priorityAsc')"
+                  class="block w-full text-left px-4 py-2 hover:bg-gray-200">Sort by
+                  Priority ↑</button>
+                <button @click="sortTasks(columnIndex, 'priorityDesc')"
+                  class="block w-full text-left px-4 py-2 hover:bg-gray-200">Sort by
+                  Priority ↓</button>
+              </div>
+            </div>
+          </header>
+
+          <ul class="space-y-3 min-h-[300px]">
+            <template x-for="(task, taskIndex) in filteredTasks(column.tasks)" :key="task.id">
+              <li data-cy="task-item" draggable="true" @dragstart="startDragging(task)" @dragend="resetDrag()"
+                @dblclick="openTaskModal(columnIndex, taskIndex)"
+                class="py-2 px-3 rounded-lg shadow-sm flex flex-col space-y-2 cursor-grab bg-white hover:bg-gray-50 border-b border-gray-100">
+                <div class="flex justify-between items-start relative">
+                  <div class="space-y-1 w-full">
+                    <div data-cy="task-item-title" class="font-medium text-gray-700 text-sm" x-text="task.title"></div>
+                    <div class="flex items-center space-x-1 text-gray-500 text-sm">
+                      <i class="ph ph-calendar text-gray-400"></i>
+                      <span x-text="formatDate(task.date)"></span>
+                    </div>
+                    <div class="pt-[1px] flex space-x-1 items-center w-full">
+                      <span class="px-2 py-[1px] rounded-full text-sm mr-1" :class="task.priorityClass"
+                        x-text="task.priority || 'Low'"></span>
+                      <div class="flex-1"></div>
+                      <span class="text-xs" x-text="getAssigneeById(task.assigneeId)?.name"></span>
+                      <img :title="getAssigneeById(task.assigneeId)?.name"
+                        :src="getAssigneeById(task.assigneeId)?.pictureUrl" alt="Assignee"
+                        class="h-6 w-6 rounded-full border border-white shadow" />
+                    </div>
+                  </div>
+                  <div class="absolute top-0 right-0">
+                    <button @click="openTaskModal(columnIndex, taskIndex)" class="text-gray-500 hover:text-gray-700"
+                      title="Edit Task"><i class="ph ph-pencil-simple text-lg"></i></button>
+                    <button @click="deleteTask(columnIndex, taskIndex)" class="text-red-500 hover:text-red-700"
+                      title="Delete Task"><i class="ph ph-trash text-lg"></i></button>
+                  </div>
+                </div>
+              </li>
+            </template>
+          </ul>
+        </div>
+      </template>
+    </div>
+    <div data-cy="list-page" x-cloak x-show="currentTab === 'list'" class="flex flex-col gap-y-6">
+      <template x-for="(column, columnIndex) in columns" :key="column.id">
+        <div data-cy="column-item" @drop.prevent="dropTask(columnIndex)" @dragover.prevent :class="column.bgClass"
+          class="rounded-lg p-2">
+          <header class="flex items-center justify-between mb-4">
+            <div class="flex items-center space-x-2">
+              <p :class="column.badgeClass"
+                class="flex items-center gap-x-1 px-2 py-1 rounded-md text-white text-sm uppercase">
+                <i :class="column.badgeIcon" class="ph text-sm"></i>
+                <span x-text="column.title"></span>
+              </p>
+              <span class="text-gray-500 text-sm font-semibold px-1"
+                x-text="filteredTasks(column.tasks)?.length"></span>
+            </div>
+            <div class="relative">
+              <button @click="openTaskModal(columnIndex)" class="text-gray-500 hover:text-gray-700">
+                <i class="ph ph-plus text-lg"></i>
+              </button>
+              <button @click="toggleDropdown(columnIndex)" class="relative text-gray-500 hover:text-gray-700">
+                <i class="ph ph-dots-three text-lg"></i>
+              </button>
+              <div x-transition.opacity x-cloak x-show="activeDropdown === columnIndex"
+                @click.away="activeDropdown = null"
+                class="absolute top-8 right-0 bg-white border rounded-lg shadow-md text-sm w-48 z-10">
+                <button @click="clearTasks(columnIndex)"
+                  class="block w-full text-left px-4 py-2 hover:bg-gray-200 text-red-600">Clear
+                  All
+                  Tasks</button>
+                <button @click="sortTasks(columnIndex, 'alphaAsc')"
+                  class="block w-full text-left px-4 py-2 hover:bg-gray-200">Sort A - Z</button>
+                <button @click="sortTasks(columnIndex, 'alphaDesc')"
+                  class="block w-full text-left px-4 py-2 hover:bg-gray-200">Sort Z - A</button>
+                <button @click="sortTasks(columnIndex, 'priorityAsc')"
+                  class="block w-full text-left px-4 py-2 hover:bg-gray-200">Sort by
+                  Priority ↑</button>
+                <button @click="sortTasks(columnIndex, 'priorityDesc')"
+                  class="block w-full text-left px-4 py-2 hover:bg-gray-200">Sort by
+                  Priority ↓</button>
+              </div>
+            </div>
+          </header>
+
+          <ul class="overflow-hidden">
+            <template x-for="(task, taskIndex) in filteredTasks(column.tasks)" :key="task.id">
+              <li data-cy="task-item" draggable="true" @dragstart="startDragging(task)" @dragend="resetDrag()"
+                @dblclick="openTaskModal(columnIndex, taskIndex)"
+                class="flex items-center justify-between p-4 rounded-md shadow-sm cursor-grab bg-white hover:bg-gray-50 border-b border-gray-200">
+                <div class="flex items-center space-x-2">
+                  <span :class="column.badgeClass" class="hidden md:block w-2 h-2 rounded-sm mr-2"></span>
+                  <span class="px-2 py-[1px] rounded-full text-sm mr-1" :class="task.priorityClass"
+                    x-text="task.priority || 'Low'"></span>
+                  <div class="font-medium text-gray-700 text-sm" x-text="task.title"></div>
+                </div>
+                <div class="flex items-center space-x-6">
+                  <div class="flex items-center space-x-2">
+                    <span class="hidden md:block text-xs" x-text="getAssigneeById(task.assigneeId)?.name"></span>
+                    <img :title="getAssigneeById(task.assigneeId)?.name"
+                      :src="getAssigneeById(task.assigneeId)?.pictureUrl" alt="Assignee"
+                      class="h-6 w-6 rounded-full border border-white shadow" />
+                  </div>
+                  <div class="hidden md:flex items-center space-x-1 text-gray-500 text-sm">
+                    <i class="ph ph-calendar text-gray-400"></i>
+                    <span x-text="formatDate(task.date)"></span>
+                  </div>
+                  <div class="flex space-x-1">
+                    <button @click="openTaskModal(columnIndex, taskIndex)" class="text-gray-500 hover:text-gray-700"
+                      title="Edit Task"><i class="ph ph-pencil-simple text-lg"></i></button>
+                    <button @click="deleteTask(columnIndex, taskIndex)" class="text-red-500 hover:text-red-700"
+                      title="Delete Task"><i class="ph ph-trash text-lg"></i></button>
+                  </div>
+                </div>
+              </li>
+            </template>
+            <div x-cloak x-show="!filteredTasks(column.tasks)?.length"
+              class="bg-white rounded-md text-gray-500 text-center py-[18px]">
+              No tasks in this category.
+            </div>
+          </ul>
+        </div>
+      </template>
+    </div>
+  </main>
+
+  <div data-cy="modal" x-cloak x-show="showModal"
+    class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50" x-transition.opacity>
+    <div @click.outside="showModal = false" @keydown.escape.window="showModal = false" @keydown.enter.window="saveTask"
+      class="bg-white rounded-lg p-6 w-96">
+      <h2 class="text-lg font-semibold mb-4" x-text="editMode ? 'Edit Task' : 'Add New Task'"></h2>
+
+      <select data-cy="task-column" x-cloak x-show="!editMode" x-model="selectedColumnIndex"
+        class="border p-2 mb-3 w-full rounded-lg">
+        <template x-for="(column, index) in columns" :key="column.id">
+          <option :value="index" x-text="column.title"></option>
+        </template>
+      </select>
+
+      <input data-cy="task-title" type="text" placeholder="Title" x-model="taskTitle"
+        class="border rounded-lg px-4 py-2 mb-3 w-full" />
+
+      <select data-cy="task-assignee" x-model="assigneeId" class="w-full px-3 py-2 mb-3 border rounded-md">
+        <template x-for="assignee in assignees" :key="assignee.id">
+          <option :value="assignee.id">
+            <span x-text="assignee.name"></span>
+          </option>
+        </template>
+      </select>
+
+      <input data-cy="task-date" type="date" x-model="taskDate" class="border p-2 w-full mb-3 rounded-lg" />
+
+      <select data-cy="task-priority" x-model="taskPriority" class="border p-2 w-full rounded-lg">
+        <option value="Urgent">Urgent</option>
+        <option value="High">High</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
+      </select>
+
+      <div class="mt-4 flex justify-end">
+        <button @click="saveTask" class="bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600">Save
+          Task</button>
+        <button @click="showModal = false"
+          class="ml-2 bg-gray-300 rounded-lg px-4 py-2 hover:bg-gray-400">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <p data-cy="feedback-message" x-cloak x-show="$store.feedback.message" x-text="$store.feedback.message"
+    :class="$store.feedback.type" class="mt-2 text-sm feedback" aria-live="polite">
+  </p>
+</body>
+
+</html>
