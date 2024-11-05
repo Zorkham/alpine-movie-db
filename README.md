@@ -8,11 +8,11 @@ Alpine Project Planner is a simple project management tool that allows users to 
 
 ## Features
 
-- **Add Task**: Add a new task by clicking the "Add Task" button.
-- **Edit Task**: Edit a task by clicking the "Edit" button.
-- **Remove Task**: Remove a task by clicking the "Delete" button.
-- **Search Task**: Search for a task by typing in the search bar.
-- **Move Task**: Move a task between different status columns by dragging and dropping.
+- **Add Tasks**: Add a new task by clicking the "New Task" button.
+- **Edit Tasks**: Edit a task by clicking the "Edit" button.
+- **Remove Tasks**: Remove a task by clicking the "Delete" button.
+- **Search Tasks**: Search for a task by typing in the search bar.
+- **Move Tasks**: Move a task between different status columns by dragging and dropping.
 - **Board View**: View tasks in a board view with different status columns.
 - **List View**: View tasks in a list view with different status lists.
 - **Local Storage**: The application uses local storage to persist data.
