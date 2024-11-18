@@ -10,10 +10,10 @@ describe('formatDate', () => {
   })
 
   it('should format a valid date string correctly', () => {
-    expect(formatDate('2023-10-05')).toBe('October 5')
+    expect(formatDate('2023-10-05')).toBe('October 5, 2023')
   })
 
   it('should format another valid date string correctly', () => {
-    expect(formatDate('2022-01-01')).toBe('January 1')
+    expect(formatDate('2022-01-01')).toBe('January 1, 2022')
   })
 })

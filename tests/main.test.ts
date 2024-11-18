@@ -1,15 +1,15 @@
 import Alpine from 'alpinejs'
 import { feedback } from '../src/stores/feedback'
+import { movieDB } from '../src/components/movieDB'
 import { navigation } from '../src/components/navigation'
 import persist from '@alpinejs/persist'
-import { planner } from '../src/components/planner'
 
 // Mock the stores
 jest.mock('../src/stores/feedback')
 
 // Mock the components
 jest.mock('../src/components/navigation')
-jest.mock('../src/components/planner')
+jest.mock('../src/components/movieDB')
 
 describe('Alpine.js initialization', () => {
   beforeAll(() => {
@@ -35,9 +35,9 @@ describe('Alpine.js initialization', () => {
     expect(Alpine.data).toHaveBeenCalledWith('navigation', navigation)
   })
 
-  it('should register the planner component', () => {
+  it('should register the movieDB component', () => {
     require('../src/main')
-    expect(Alpine.data).toHaveBeenCalledWith('planner', planner)
+    expect(Alpine.data).toHaveBeenCalledWith('movieDB', movieDB)
   })
 
   it('should expose Alpine globally', () => {

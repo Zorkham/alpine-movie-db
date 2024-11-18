@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --primary-color: #E50815;
+  --secondary-color: rgb(234, 179, 8);
+  --background-color: #000000;
+  /* --background-color: #141414fc; */
+}
+
 [x-cloak] {
   display: none !important;
 }

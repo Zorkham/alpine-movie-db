@@ -1,20 +1,19 @@
-# Alpine Project Planner
+# Alpine Movie DB
 
-Alpine Project Planner is a simple project management tool that allows users to add, edit, delete, search, and move tasks between different status columns. The application uses local storage to persist data and works on all devices.
+Alpine Movie DB is a simple movie database application built with Alpine.js. The application allows users to search for movies, tv shows and people. The application uses the [TMDB API](https://www.themoviedb.org/) to fetch all data.
 
-**Demo: [alpine-project-planner.vercel.app](https://alpine-project-planner.vercel.app)**
+**Demo: [alpine-movie-db.vercel.app](https://alpine-movie-db.vercel.app)**
 
-[![Preview](./public/preview.png)](https://alpine-project-planner.vercel.app)
+[![Preview](./public/preview.png)](https://alpine-movie-db.vercel.app)
 
 ## Features
 
-- **Add Tasks**: Add a new task by clicking the "New Task" button.
-- **Edit Tasks**: Edit a task by clicking the "Edit" button.
-- **Remove Tasks**: Remove a task by clicking the "Delete" button.
-- **Search Tasks**: Search for a task by typing in the search bar.
-- **Move Tasks**: Move a task between different status columns by dragging and dropping.
-- **Board View**: View tasks in a board view with different status columns.
-- **List View**: View tasks in a list view with different status lists.
+- **Movies Views**: Users can see popular, now playing, coming soon, top 100 movies.
+- **Popular TV Shows**: Users can see popular, airing today, on tv, top 100 tv shows.
+- **Popular Peoples**: Users can see popular peoples.
+- **Search Movies**: Users can search for movies by title.
+- **Search TV Shows**: Users can search for tv shows by title.
+- **Search Peoples**: Users can search for peoples by title.
 - **Local Storage**: The application uses local storage to persist data.
 - **Responsive Design**: The application is responsive and works on all devices.
 
@@ -51,7 +50,7 @@ To get started with this project, follow these steps:
 1. **Clone the repository**:
 
   ```sh
-  git clone https://github.com/zorkham/alpine-project-planner.git
+  git clone https://github.com/zorkham/alpine-movie-db.git
   ```
 
 2. **Install dependencies**:
@@ -93,5 +92,5 @@ This project uses Jest, Cypress, and Cucumber for testing. To run the tests, use
 ## Other Projects
 
 - [Alpine Markt](https://github.com/Zorkham/alpine-markt)
+- [Alpine Project Planner](https://github.com/Zorkham/alpine-project-planner)
 - [Alpine Password Manager](https://github.com/Zorkham/alpine-password-manager)
-- [Alpine Board Game Explorer](https://github.com/Zorkham/alpine-board-game-explorer)
