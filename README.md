@@ -20,6 +20,8 @@ Alpine Movie DB is a simple movie database application built with Alpine.js. The
 ## Tech Stack
 
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
+![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB)
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 ![Alpine.js](https://img.shields.io/badge/Alpine%20JS-8BC0D0?style=for-the-badge&logo=alpinedotjs&logoColor=black)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
@@ -34,7 +36,8 @@ Alpine Movie DB is a simple movie database application built with Alpine.js. The
 ![Vite](https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white)
 ![Vercel](https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white)
 
-- **Framework**: [Alpine.js](https://alpinejs.dev)
+- **Framework**: [Alpine.js](https://alpinejs.dev) [Node.js](https://nodejs.org), [Express.js](https://expressjs.com)
+- **Type Checking**: [TypeScript](https://www.typescriptlang.org)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com)
 - **Linting**: [ESLint](https://eslint.org)
 - **Formatting**: [Prettier](https://prettier.io)
