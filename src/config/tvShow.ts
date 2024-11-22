@@ -1,4 +1,4 @@
-export type TVShow = {
+export type TvShow = {
   id: number
   name: string
   overview: string

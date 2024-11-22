@@ -1,7 +1,7 @@
 import Alpine from 'alpinejs'
 import { Movie } from '../config/movie'
 import { People } from '../config/people'
-import { TVShow } from '../config/tvShow'
+import { TvShow } from '../config/tvShow'
 import { formatDate } from '../utils/date'
 
 export const movieDB = () => ({
@@ -10,14 +10,14 @@ export const movieDB = () => ({
 
   popularMoviesLoading: false,
   topRatedMoviesLoading: false,
-  popularTVShowsLoading: false,
-  topRatedTVShowsLoading: false,
+  popularTvShowsLoading: false,
+  topRatedTvShowsLoading: false,
   popularPersonsLoading: false,
 
   popularMoviesPage: 1,
   topRatedMoviesPage: 1,
-  popularTVShowsPage: 1,
-  topRatedTVShowsPage: 1,
+  popularTvShowsPage: 1,
+  topRatedTvShowsPage: 1,
   popularPersonsPage: 1,
 
   popularMovies: [] as Movie[],
@@ -25,20 +25,15 @@ export const movieDB = () => ({
   comingSoonMovies: [] as Movie[],
   topRatedMovies: [] as Movie[],
 
-  popularTVShows: [] as TVShow[],
-  airingTodayTVShows: [] as TVShow[],
-  onTheAirTVShows: [] as TVShow[],
-  topRatedTVShows: [] as TVShow[],
+  popularTvShows: [] as TvShow[],
+  airingTodayTvShows: [] as TvShow[],
+  onTheAirTvShows: [] as TvShow[],
+  topRatedTvShows: [] as TvShow[],
 
   popularPersons: [] as People[],
 
-  randomMovieInfos: null as Movie | null,
+  randomMovieDetails: null as Movie | null,
   randomMoviePicture: null as string | null,
-
-  // @ts-ignore
-  apiKey: import.meta.env.VITE_API_KEY_TMDB,
-  // @ts-ignore
-  apiUrl: import.meta.env.VITE_API_URL,
 
   // Convert date to human readable format
   formatDate,
@@ -49,21 +44,22 @@ export const movieDB = () => ({
     this.searchResults = []
   },
 
+  // Fetch search results from the API
   async fetchSearchResults() {
     if (this.search.length < 2) {
       this.searchResults = []
       return
     }
-    const url = `${this.apiUrl}/search/multi?api_key=${this.apiKey}&query=${this.search}&include_adult=false&language=en-US&region=FR&page=1`
+    const url = `/api/search?query=${this.search}`
     const response = await fetch(url)
     const data = await response.json()
-    console.dir(data.results)
     this.searchResults = data.results.slice(0, 5)
   },
 
+  // Fetch popular movies from the API
   async fetchPopularMovies() {
     this.popularMoviesLoading = true
-    const url = `${this.apiUrl}/discover/movie?api_key=${this.apiKey}&include_adult=false&include_video=false&language=en-US&region=FR&year=2024&sort_by=popularity.desc&page=${this.popularMoviesPage}`
+    const url = `/api/movies/popular?page=${this.popularMoviesPage}`
     fetch(url)
       .then((response) => response.json())
       .then((data: { results: [] }) => {
@@ -78,8 +74,9 @@ export const movieDB = () => ({
       })
   },
 
+  // Fetch now playing movies from the API
   async fetchNowPlayingMovies() {
-    const url = `${this.apiUrl}/movie/now_playing?api_key=${this.apiKey}&language=en-US&region=FR&page=1`
+    const url = `/api/movies/now_playing`
     fetch(url)
       .then((response) => response.json())
       .then((data: { results: [] }) => {
@@ -88,8 +85,9 @@ export const movieDB = () => ({
       .catch(console.error)
   },
 
+  // Fetch coming soon movies from the API
   async fetchComingSoonMovies() {
-    const url = `${this.apiUrl}/movie/upcoming?api_key=${this.apiKey}&language=en-US&region=FR&page=1`
+    const url = `/api/movies/upcoming`
     fetch(url)
       .then((response) => response.json())
       .then((data: { results: [] }) => {
@@ -99,9 +97,10 @@ export const movieDB = () => ({
       .catch(console.error)
   },
 
+  // Fetch top rated movies from the API
   async fetchTopRatedMovies() {
     this.topRatedMoviesLoading = true
-    const url = `${this.apiUrl}/movie/top_rated?api_key=${this.apiKey}&language=en-US&region=FR&page=${this.topRatedMoviesPage}`
+    const url = `/api/movies/top_rated?page=${this.topRatedMoviesPage}`
     fetch(url)
       .then((response) => response.json())
       .then((data: { results: [] }) => {
@@ -116,63 +115,68 @@ export const movieDB = () => ({
       })
   },
 
-  async fetchPopularTVShows() {
-    this.popularTVShowsLoading = true
-    const url = `${this.apiUrl}/discover/tv?api_key=${this.apiKey}&include_adult=false&include_video=false&language=en-US&region=FR&year=2024&sort_by=popularity.desc&page=${this.popularTVShowsPage}`
+  // Fetch popular tv shows from the API
+  async fetchPopularTvShows() {
+    this.popularTvShowsLoading = true
+    const url = `/api/tv_shows/popular?page=${this.popularTvShowsPage}`
     fetch(url)
       .then((response) => response.json())
       .then((data: { results: [] }) => {
         if (data?.results?.length) {
-          this.popularTVShows.push(...data.results)
-          this.popularTVShowsPage++
+          this.popularTvShows.push(...data.results)
+          this.popularTvShowsPage++
         }
       })
       .catch(console.error)
       .finally(() => {
-        this.popularTVShowsLoading = false
+        this.popularTvShowsLoading = false
       })
   },
 
-  async fetchAiringTodayTVShows() {
-    const url = `${this.apiUrl}/tv/airing_today?api_key=${this.apiKey}&language=en-US&region=FR&page=1`
+  // Fetch airing today tv shows from the API
+  async fetchAiringTodayTvShows() {
+    const url = `/api/tv_shows/airing_today`
     fetch(url)
       .then((response) => response.json())
       .then((data: { results: [] }) => {
-        this.airingTodayTVShows = [...data.results]
+        this.airingTodayTvShows = [...data.results]
       })
       .catch(console.error)
   },
 
-  async fetchOnTheAirTVShows() {
-    const url = `${this.apiUrl}/tv/on_the_air?api_key=${this.apiKey}&language=en-US&region=FR&page=1`
+  // Fetch on the air tv shows from the API
+  async fetchOnTheAirTvShows() {
+    const url = `/api/tv_shows/on_the_air`
     fetch(url)
       .then((response) => response.json())
       .then((data: { results: [] }) => {
-        this.onTheAirTVShows = [...data.results]
+        this.onTheAirTvShows = [...data.results]
       })
       .catch(console.error)
   },
 
-  async fetchTopRatedTVShows() {
-    this.topRatedTVShowsLoading = true
-    const url = `${this.apiUrl}/tv/top_rated?api_key=${this.apiKey}&language=en-US&region=FR&page=${this.topRatedTVShowsPage}`
+  // Fetch top rated tv shows from the API
+  async fetchTopRatedTvShows() {
+    this.topRatedTvShowsLoading = true
+    const url = `/api/tv_shows/top_rated?page=${this.topRatedTvShowsPage}`
     fetch(url)
       .then((response) => response.json())
       .then((data: { results: [] }) => {
         if (data?.results?.length) {
-          this.topRatedTVShows.push(...data.results)
-          this.topRatedTVShowsPage++
+          this.topRatedTvShows.push(...data.results)
+          this.topRatedTvShowsPage++
         }
       })
       .catch(console.error)
       .finally(() => {
-        this.topRatedTVShowsLoading = false
+        this.topRatedTvShowsLoading = false
       })
   },
 
+  // Fetch popular persons from the API
   async fetchPopularPersons() {
     this.popularPersonsLoading = true
-    const url = `${this.apiUrl}/person/popular?api_key=${this.apiKey}&language=en-US&region=FR&page=${this.popularPersonsPage}`
+    const url = `/api/persons/popular?page=${this.popularPersonsPage}`
     fetch(url)
       .then((response) => response.json())
       .then((data: { results: [] }) => {
@@ -187,6 +191,7 @@ export const movieDB = () => ({
       })
   },
 
+  // Check if the user has scrolled to the bottom of the popular movies list
   popularMoviesCheckScroll() {
     // @ts-ignore
     const listHeight = this.$refs.popularMoviesList?.scrollHeight
@@ -200,6 +205,7 @@ export const movieDB = () => ({
     }
   },
 
+  // Check if the user has scrolled to the bottom of the top rated movies list
   topRatedMoviesCheckScroll() {
     // @ts-ignore
     const listHeight = this.$refs.topRatedMoviesList?.scrollHeight
@@ -213,32 +219,35 @@ export const movieDB = () => ({
     }
   },
 
-  popularTVShowsCheckScroll() {
+  // Check if the user has scrolled to the bottom of the popular Tv shows list
+  popularTvShowsCheckScroll() {
     // @ts-ignore
-    const listHeight = this.$refs.popularTVShowsList?.scrollHeight
+    const listHeight = this.$refs.popularTvShowsList?.scrollHeight
     const scrollHeight = window.innerHeight + window.scrollY
     if (
       scrollHeight >= listHeight - 50 &&
-      !this.popularTVShowsLoading &&
-      this.popularTVShowsPage <= 5
+      !this.popularTvShowsLoading &&
+      this.popularTvShowsPage <= 5
     ) {
-      this.fetchPopularTVShows()
+      this.fetchPopularTvShows()
     }
   },
 
-  topRatedTVShowsCheckScroll() {
+  // Check if the user has scrolled to the bottom of the top rated Tv shows list
+  topRatedTvShowsCheckScroll() {
     // @ts-ignore
-    const listHeight = this.$refs.topRatedTVShowsList?.scrollHeight
+    const listHeight = this.$refs.topRatedTvShowsList?.scrollHeight
     const scrollHeight = window.innerHeight + window.scrollY
     if (
       scrollHeight >= listHeight - 50 &&
-      !this.topRatedTVShowsLoading &&
-      this.topRatedTVShowsPage <= 5
+      !this.topRatedTvShowsLoading &&
+      this.topRatedTvShowsPage <= 5
     ) {
-      this.fetchTopRatedTVShows()
+      this.fetchTopRatedTvShows()
     }
   },
 
+  // Check if the user has scrolled to the bottom of the popular persons list
   popularPersonsCheckScroll() {
     // @ts-ignore
     const listHeight = this.$refs.popularPersonsList?.scrollHeight
@@ -252,25 +261,27 @@ export const movieDB = () => ({
     }
   },
 
+  // Select a movie and redirect to the movie detail page
   async selectMovie(id: number, type: string) {
-    window.location.href = `/movie-detail.html?id=${id}`
+    // window.location.href = `/movie-detail.html?id=${id}`
   },
 
+  // Select a Tv show and redirect to the Tv show detail page
   async getRandomMovie() {
-    this.randomMovieInfos = null
+    this.randomMovieDetails = null
     this.randomMoviePicture = null
 
     if (!this.comingSoonMovies?.length) {
       return
     }
 
-    this.randomMovieInfos =
+    this.randomMovieDetails =
       this.comingSoonMovies[
         Math.floor(Math.random() * this.comingSoonMovies.length)
       ]
 
     const imagesResponse = await fetch(
-      `${this.apiUrl}/movie/${this.randomMovieInfos?.id}/images?api_key=${this.apiKey}`
+      `/api/movies/${this.randomMovieDetails?.id}/images`
     )
     const imagesData = await imagesResponse.json()
 
@@ -283,10 +294,12 @@ export const movieDB = () => ({
     }
   },
 
+  // Get the full poster URL
   getPosterUrl(path: string) {
     return `https://image.tmdb.org/t/p/w500${path}`
   },
 
+  // Get the full profile URL
   getProfileUrl(path: string) {
     return `https://media.themoviedb.org/t/p/w470_and_h470_face${path}`
   }

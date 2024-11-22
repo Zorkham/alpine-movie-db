@@ -70,8 +70,8 @@
           </button>
           <div x-transition.opacity x-cloak x-show="toggleDropdown"
             class="absolute top-10 left-0 bg-[#2a2a2a] rounded-lg shadow-lg text-sm w-48 z-30 p-4 space-y-4">
-            <button @click="toggleDropdown = false; changeTab('popularTVShows')"
-              :class="{ 'text-secondary-color': currentTab === 'popularTVShows' }"
+            <button @click="toggleDropdown = false; changeTab('popularTvShows')"
+              :class="{ 'text-secondary-color': currentTab === 'popularTvShows' }"
               class="flex items-center space-x-2 hover:secondary-color">
               <i class="ph-fire"></i><span class="md:inline-block">Popular</span>
             </button>
@@ -85,13 +85,13 @@
               class="flex items-center space-x-2 hover:secondary-color">
               <i class="ph-monitor-play"></i><span class="md:inline-block">On TV</span>
             </button>
-            <button @click="toggleDropdown = false; changeTab('topRatedTVShows')"
-              :class="{ 'text-secondary-color': currentTab === 'topRatedTVShows' }"
+            <button @click="toggleDropdown = false; changeTab('topRatedTvShows')"
+              :class="{ 'text-secondary-color': currentTab === 'topRatedTvShows' }"
               class="flex items-center space-x-2 hover:secondary-color">
               <i class="ph-star"></i><span class="md:inline-block">Top 100</span>
             </button>
-            <!-- <button @click="toggleDropdown = false; changeTab('categoriesTVShows')"
-              :class="{ 'text-secondary-color': currentTab === 'categoriesTVShows' }"
+            <!-- <button @click="toggleDropdown = false; changeTab('categoriesTvShows')"
+              :class="{ 'text-secondary-color': currentTab === 'categoriesTvShows' }"
               class="flex items-center space-x-2 hover:secondary-color">
               <i class="ph-squares-four"></i><span class="md:inline-block">Categories</span>
             </button> -->
@@ -128,7 +128,7 @@
                 <div class="flex items-center text-xs text-white mt-2">
                   <span x-cloak x-show="result.media_type"
                     class="text-secondary-color bg-black bg-opacity-50 font-bold px-2 py-1 rounded mr-2"
-                    x-text="result.media_type.length === 2 ? result.media_type.toUpperCase() : result.media_type?.charAt(0)?i.toUpperCase() + result.media_type?.slice(1)"></span>
+                    x-text="result.media_type.length === 2 ? result.media_type.toUpperCase() : result.media_type?.charAt(0)?.toUpperCase() + result.media_type?.slice(1)"></span>
                   <span x-cloak x-show="result.release_date"
                     x-text="new Date(result.release_date).getFullYear()"></span>
                   <span x-cloak x-show="result.first_air_date"
@@ -155,25 +155,25 @@
       <div class="mt-24">
         <div class="mb-8 space-y-2 flex flex-col lg:flex-row">
           <img
-            :src="randomMovieInfos?.poster_path ? getPosterUrl(randomMovieInfos?.poster_path) : randomMovieInfos?.profile_path ? getProfileUrl(randomMovieInfos?.profile_path) : '/default.png'"
-            :alt="`${randomMovieInfos?.title || randomMovieInfos?.name} poster`"
+            :src="randomMovieDetails?.poster_path ? getPosterUrl(randomMovieDetails?.poster_path) : randomMovieDetails?.profile_path ? getProfileUrl(randomMovieDetails?.profile_path) : '/default.png'"
+            :alt="`${randomMovieDetails?.title || randomMovieDetails?.name} poster`"
             class="w-32 h-48 object-cover rounded-sm mr-8 mb-8">
           <div class="w-full lg:w-[50%]">
-            <h2 class="text-3xl lg:text-5xl font-bold text-white flex items-center" x-text="randomMovieInfos?.title">
+            <h2 class="text-3xl lg:text-5xl font-bold text-white flex items-center" x-text="randomMovieDetails?.title">
             </h2>
             <div class="flex items-center text-lg lg:text-xl text-white mt-2">
               <span class="text-secondary-color bg-black bg-opacity-50 font-bold px-2 py-1 rounded mr-2" x-cloak
-                x-show="randomMovieInfos?.vote_average !== 0"
-                x-text="randomMovieInfos?.vote_average?.toFixed(1)"></span>
-              <span x-text="formatDate(randomMovieInfos?.release_date)"></span>
+                x-show="randomMovieDetails?.vote_average !== 0"
+                x-text="randomMovieDetails?.vote_average?.toFixed(1)"></span>
+              <span x-text="formatDate(randomMovieDetails?.release_date)"></span>
             </div>
             <div class="mt-8 leading-7 italic">
-              <p x-text="randomMovieInfos?.overview"></p>
+              <p x-text="randomMovieDetails?.overview"></p>
             </div>
             <div class="mt-8">
               <button @click="changeTab('comingSoon')"
                 class="flex items-center text-white text-sm hover:text-secondary-color p-2 space-x-1">
-                <span>See all upcoming movies</span><i class="ph-caret-right"></i>
+                <span>See all upcoming movies</span><i class="ph-caret-right text-sm"></i>
               </button>
             </div>
           </div>
@@ -339,8 +339,8 @@
       </div>
     </template>-->
 
-    <template x-if="currentTab === 'popularTVShows'" @scroll.window="popularTVShowsCheckScroll">
-      <div x-init="fetchPopularTVShows">
+    <template x-if="currentTab === 'popularTvShows'" @scroll.window="popularTvShowsCheckScroll">
+      <div x-init="fetchPopularTvShows">
         <div class="mb-8 space-y-2">
           <h2 class="text-2xl lg:text-3xl font-bold text-white flex items-center"><i class="ph-fire mr-3"></i>Popular TV
             shows
@@ -348,8 +348,8 @@
           <p class="text-gray-400">Discover the most popular TV shows</p>
         </div>
         <ul class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-12"
-          x-ref="popularTVShowsList">
-          <template x-for="(tvShow, index) in popularTVShows" :key="`${tvShow.id}-${index}`">
+          x-ref="popularTvShowsList">
+          <template x-for="(tvShow, index) in popularTvShows" :key="`${tvShow.id}-${index}`">
             <li x-data="{ isVisible: false }"
               class="relative group cursor-pointer overflow-hidden rounded-sm transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-black/70">
               <img x-cloak x-show="isVisible" x-transition:enter="transition ease-out duration-500"
@@ -378,7 +378,7 @@
     </template>
 
     <template x-if="currentTab === 'airingToday'">
-      <div x-init="fetchAiringTodayTVShows">
+      <div x-init="fetchAiringTodayTvShows">
         <div class="mb-8 space-y-2">
           <h2 class="text-2xl lg:text-3xl font-bold text-white flex items-center"><i
               class="ph-calendar-check mr-3"></i>Airing today
@@ -386,7 +386,7 @@
           <p class="text-gray-400">Browse all the TV shows airing today</p>
         </div>
         <ul class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-12">
-          <template x-for="(tvShow, index) in airingTodayTVShows" :key="`${tvShow.id}-${index}`">
+          <template x-for="(tvShow, index) in airingTodayTvShows" :key="`${tvShow.id}-${index}`">
             <li x-data="{ isVisible: false }"
               class="relative group cursor-pointer overflow-hidden rounded-sm transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-black/70">
               <img x-cloak x-show="isVisible" x-transition:enter="transition ease-out duration-500"
@@ -415,14 +415,14 @@
     </template>
 
     <template x-if="currentTab === 'onTv'">
-      <div x-init="fetchOnTheAirTVShows">
+      <div x-init="fetchOnTheAirTvShows">
         <div class="mb-8 space-y-2">
           <h2 class="text-2xl lg:text-3xl font-bold text-white flex items-center"><i class="ph-monitor-play mr-3"></i>On
             TV</h2>
           <p class="text-gray-400">Browse all TV shows currently on air</p>
         </div>
         <ul class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-12">
-          <template x-for="(tvShow, index) in onTheAirTVShows" :key="`${tvShow.id}-${index}`">
+          <template x-for="(tvShow, index) in onTheAirTvShows" :key="`${tvShow.id}-${index}`">
             <li x-data="{ isVisible: false }"
               class="relative group cursor-pointer overflow-hidden rounded-sm transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-black/70">
               <img x-cloak x-show="isVisible" x-transition:enter="transition ease-out duration-500"
@@ -450,16 +450,16 @@
       </div>
     </template>
 
-    <template x-if="currentTab === 'topRatedTVShows'" @scroll.window="topRatedTVShowsCheckScroll">
-      <div x-init="fetchTopRatedTVShows">
+    <template x-if="currentTab === 'topRatedTvShows'" @scroll.window="topRatedTvShowsCheckScroll">
+      <div x-init="fetchTopRatedTvShows">
         <div class="mb-8 space-y-2">
           <h2 class="text-2xl lg:text-3xl font-bold text-white flex items-center"><i class="ph-star mr-3"></i>Top 100 TV
             shows</h2>
           <p class="text-gray-400">Discover the top 100 most popular TV shows of all time</p>
         </div>
         <ul class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-12"
-          x-ref="topRatedTVShowsList">
-          <template x-for="(tvShow, index) in topRatedTVShows" :key="`${tvShow.id}-${index}`">
+          x-ref="topRatedTvShowsList">
+          <template x-for="(tvShow, index) in topRatedTvShows" :key="`${tvShow.id}-${index}`">
             <li x-data="{ isVisible: false }"
               class="relative group cursor-pointer overflow-hidden rounded-sm transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-black/70">
               <img x-cloak x-show="isVisible" x-transition:enter="transition ease-out duration-500"
@@ -487,12 +487,12 @@
       </div>
     </template>
 
-    <!--<template x-if="currentTab === 'categoriesTVShows'">
+    <!--<template x-if="currentTab === 'categoriesTvShows'">
       <div>
         <div class="mb-8 space-y-2">
           <h2 class="text-2xl lg:text-3xl font-bold text-white flex items-center"><i class="ph-squares-four mr-3"></i>Categories
           </h2>
-          <p class="text-gray-400">Browse all the different TV shows categories</p>
+          <p class="text-gray-400">Browse all the different Tv shows categories</p>
         </div>
       </div>
     </template>-->
