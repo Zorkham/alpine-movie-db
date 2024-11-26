@@ -5,7 +5,7 @@
   "main": "src/main.ts",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && tsc -p server/tsconfig.json",
     "serve": "vite preview",
     "lint": "eslint .",
     "lint:fix": "eslint --fix . && prettier --write .",
