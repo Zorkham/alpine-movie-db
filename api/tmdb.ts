@@ -5,7 +5,7 @@ import axios from 'axios'
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const { path } = req.query
-    const tmdbApiKey = process.env.TMDB_API_KEY
+    const TMDB_API_KEY = process.env.TMDB_API_KEY
 
     if (!path) {
       return res.status(400).json({ error: 'Path is required' })
@@ -14,7 +14,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const tmdbResponse = await axios.get(
       `https://api.themoviedb.org/3${path}`,
       {
-        params: { api_key: tmdbApiKey, ...req.query }
+        params: { api_key: TMDB_API_KEY, ...req.query }
       }
     )
 
