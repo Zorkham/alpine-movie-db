@@ -6,7 +6,10 @@ import { formatDate } from '../utils/date'
 
 export const movieDB = () => ({
   search: Alpine.$persist('') as unknown as string,
-  searchResults: Alpine.$persist([]) as unknown as [],
+  searchResults: Alpine.$persist([]) as unknown as
+    | Movie[]
+    | TvShow[]
+    | People[],
 
   popularMoviesLoading: false,
   topRatedMoviesLoading: false,

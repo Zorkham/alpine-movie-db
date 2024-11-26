@@ -8,6 +8,7 @@ describe('navigation component', () => {
   let navigationInstance: ReturnType<typeof navigation>
 
   beforeEach(() => {
+    window.scrollTo = jest.fn()
     navigationInstance = navigation()
   })
 
