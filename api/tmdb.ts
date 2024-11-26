@@ -19,7 +19,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     )
 
     res.status(200).json(tmdbResponse.data)
-  } catch (error) {
-    res.status(500).json({ error: 'An error occurred', details: error.message })
+  } catch (error: any) {
+    res
+      .status(500)
+      .json({ error: 'An error occurred', details: error?.message })
   }
 }
