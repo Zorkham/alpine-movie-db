@@ -53,7 +53,7 @@ export const movieDB = () => ({
       this.searchResults = []
       return
     }
-    const url = `/api/search?query=${this.search}`
+    const url = `/api/tmdb?path=/search/multi&include_adult=false&language=en-US&region=FR&page=1&query=${this.search}`
     const response = await fetch(url)
     const data = await response.json()
     this.searchResults = data.results.slice(0, 5)
@@ -62,7 +62,8 @@ export const movieDB = () => ({
   // Fetch popular movies from the API
   async fetchPopularMovies() {
     this.popularMoviesLoading = true
-    const url = `/api/movies/popular?page=${this.popularMoviesPage}`
+
+    const url = `/api/tmdb?path=/movie/popular&include_adult=false&include_video=false&sort_by=popularity.desc&year=2024&language=en-US&region=FR&page=${this.popularMoviesPage}`
     fetch(url)
       .then((response) => response.json())
       .then((data: { results: [] }) => {
@@ -79,7 +80,7 @@ export const movieDB = () => ({
 
   // Fetch now playing movies from the API
   async fetchNowPlayingMovies() {
-    const url = `/api/movies/now_playing`
+    const url = `/api/tmdb?path=/movie/now_playing&language=en-US&region=FR&page=1`
     fetch(url)
       .then((response) => response.json())
       .then((data: { results: [] }) => {
@@ -90,7 +91,7 @@ export const movieDB = () => ({
 
   // Fetch coming soon movies from the API
   async fetchComingSoonMovies() {
-    const url = `/api/movies/upcoming`
+    const url = `/api/tmdb?path=/movie/upcoming&language=en-US&region=FR&page=1`
     fetch(url)
       .then((response) => response.json())
       .then((data: { results: [] }) => {
@@ -103,7 +104,7 @@ export const movieDB = () => ({
   // Fetch top rated movies from the API
   async fetchTopRatedMovies() {
     this.topRatedMoviesLoading = true
-    const url = `/api/movies/top_rated?page=${this.topRatedMoviesPage}`
+    const url = `/api/tmdb?path=/movie/top_rated&language=en-US&region=FR&page=${this.topRatedMoviesPage}`
     fetch(url)
       .then((response) => response.json())
       .then((data: { results: [] }) => {

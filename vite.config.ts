@@ -1,22 +1,8 @@
 import { defineConfig } from 'vite'
-import dotenv from 'dotenv'
-
-dotenv.config()
 
 export default defineConfig({
   server: {
-    port: 3000,
-    proxy: {
-      '/api': {
-        target: `http://localhost:${process.env.VITE_API_PORT || 3001}`,
-        changeOrigin: true
-      }
-    }
-  },
-  define: {
-    'process.env.VITE_API_PORT': JSON.stringify(
-      process.env.VITE_API_PORT || 3001
-    )
+    port: 3000
   },
   build: {
     rollupOptions: {
